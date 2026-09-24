@@ -1,5 +1,5 @@
 (ns plasticcoord.actor-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [plasticcoord.actor :as actor]
             [plasticcoord.store :as store]))
 
