@@ -1,0 +1,35 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:physics` runs it.
+;;
+;; README "Robotics premise": a plant scheduling/logistics coordination robot
+;; schedules an injection-molding/extrusion crew, logs runs/inventory and
+;; coordinates raw-plastic/resin supply; it never operates the machines. Its
+;; physical work is plant logistics: taking molded parts to packing once they
+;; have cooled, and moving resin octabins to the dryer/hopper loader.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isco-8142"
+ :cases
+ [{:id :molded-part-cool-before-packing
+   :kind :thermal
+   :procedure "a 4 mm polypropylene part ejected at 90 °C cools on the conveyor in still air before it is packed"
+   :params {:thickness-m 0.004 :conductivity-w-mk 0.2 :density-kg-m3 900.0 :specific-heat-j-kgk 1900.0
+            :t0-c 90.0 :t-hot-c 25.0 :h-front-w-m2k 10.0 :t-back-ambient-c 25.0 :h-back-w-m2k 10.0
+            :threshold-c 200.0 :nodes 11}
+   :sweep {:param :duration-s :values [30.0 60.0 120.0 240.0 480.0]}
+   :quantity :final-back-c
+   :limit {:max 45.0 :basis "estimate: 45 °C packing ceiling so stacked parts do not warp or stick"}
+   :boundary {:lo 10.0 :hi 1200.0}}
+  {:id :resin-octabin-to-dryer
+   :kind :transport
+   :procedure "pallet AMR carries a resin octabin from the silo room to the dryer/hopper loader"
+   :params {:mass-kg 200.0 :distance-m 70.0 :v-max-mps 1.0 :a-max-mps2 0.3
+            :brake-decel-mps2 1.0 :drive-force-n 450.0 :crr 0.02
+            :cog-height-m 0.30 :payload-cog-height-m 0.70 :support-half-length-m 0.50
+            :max-time-s 1200.0}
+   :sweep {:param :payload-kg :values [200.0 400.0 600.0 800.0 1100.0]}
+   :quantity :cycle-time-s
+   :limit {:max 90.0 :basis "estimate: one resin delivery before the hopper runs down"}
+   :boundary {:lo 100.0 :hi 2500.0}}]}
