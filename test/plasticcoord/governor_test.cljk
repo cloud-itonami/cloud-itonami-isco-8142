@@ -1,5 +1,5 @@
 (ns plasticcoord.governor-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [plasticcoord.store :as store]
             [plasticcoord.advisor :as advisor]
             [plasticcoord.governor :as governor]))
